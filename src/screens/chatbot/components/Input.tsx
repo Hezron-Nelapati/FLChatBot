@@ -11,7 +11,12 @@ import {defaultTheme} from '@flyerhq/react-native-chat-ui';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {isEmpty, trim} from 'lodash';
-import {check, PERMISSIONS, request, RESULTS} from 'react-native-permissions';
+import {
+  checkMultiple,
+  PERMISSIONS,
+  requestMultiple,
+  RESULTS,
+} from 'react-native-permissions';
 import Recognizer from '../../../common/voice';
 import {
   SpeechEndEvent,
@@ -60,7 +65,7 @@ const Input: FC<InputProps> = function ({onSend}) {
   }, []);
 
   const startListener = useCallback((event: SpeechStartEvent) => {
-    if (event.error) {
+    if (event?.error) {
       console.error('Error occurred while starting voice recognition');
       return;
     }
@@ -68,23 +73,25 @@ const Input: FC<InputProps> = function ({onSend}) {
   }, []);
 
   const stopListener = useCallback((event: SpeechEndEvent) => {
-    if (event.error) {
+    if (event?.error) {
       console.error('Error occurred while stopping voice recognition');
     }
     _isRecognizing.toggle(false);
   }, []);
 
   const errorListener = useCallback((event: SpeechErrorEvent) => {
-    if (event.error) {
+    if (event?.error) {
       console.error('Error occurred while stopping voice recognition');
     }
     _isRecognizing.toggle(false);
   }, []);
 
-  const resultListener = useCallback((event: SpeechResultsEvent) => {
-    const _result = event.value?.[0] ?? '';
+  const resultListener = useCallback(async (event: SpeechResultsEvent) => {
+    const _result = event?.value?.[0] ?? '';
+    if (_result === text) {
+      return;
+    }
     setText(_result);
-    _isRecognizing.toggle(false);
   }, []);
 
   const stopVoiceRecognition = useCallback(async () => {
@@ -93,13 +100,22 @@ const Input: FC<InputProps> = function ({onSend}) {
 
   const checkPermissionAndStartVoiceRecognition = useCallback(async () => {
     try {
-      const result = await check(
+      const results = await checkMultiple(
         Platform.OS === 'ios'
-          ? PERMISSIONS.IOS.SPEECH_RECOGNITION
-          : PERMISSIONS.ANDROID.RECORD_AUDIO,
+          ? [PERMISSIONS.IOS.MICROPHONE, PERMISSIONS.IOS.SPEECH_RECOGNITION]
+          : [PERMISSIONS.ANDROID.RECORD_AUDIO],
       );
-      if (result !== RESULTS.GRANTED) {
-        throw new Error(result);
+      if (Platform.OS === 'ios') {
+        if (
+          results[PERMISSIONS.IOS.MICROPHONE] !== RESULTS.GRANTED ||
+          results[PERMISSIONS.IOS.SPEECH_RECOGNITION] !== RESULTS.GRANTED
+        ) {
+          throw new Error('Permission not granted');
+        }
+      } else if (
+        results[PERMISSIONS.ANDROID.RECORD_AUDIO] !== RESULTS.GRANTED
+      ) {
+        throw new Error('Permission not granted');
       }
       await Recognizer.start();
     } catch (e) {
@@ -107,10 +123,10 @@ const Input: FC<InputProps> = function ({onSend}) {
       Alert.alert(
         'Microphone permission is required. Please try again after enabling permission.',
       );
-      await request(
+      await requestMultiple(
         Platform.OS === 'ios'
-          ? PERMISSIONS.IOS.SPEECH_RECOGNITION
-          : PERMISSIONS.ANDROID.RECORD_AUDIO,
+          ? [PERMISSIONS.IOS.MICROPHONE, PERMISSIONS.IOS.SPEECH_RECOGNITION]
+          : [PERMISSIONS.ANDROID.RECORD_AUDIO],
       );
     }
   }, []);
@@ -158,22 +174,23 @@ const Input: FC<InputProps> = function ({onSend}) {
           marginLeft: _isVoiceAvailable.value ? 8 : 0,
           marginRight: 8,
         }}>
-        <TextInput
-          value={text}
-          style={{
-            backgroundColor: defaultTheme.colors.inputBackground,
-            color: defaultTheme.colors.inputText,
-          }}
-          onChangeText={setText}
-        />
         {_isRecognizing.value ? (
           <ActivityIndicator
             color={defaultTheme.colors.primary}
             size={'small'}
           />
         ) : null}
+        <TextInput
+          value={text}
+          style={{
+            backgroundColor: defaultTheme.colors.inputBackground,
+            color: defaultTheme.colors.inputText,
+            flex: 1,
+          }}
+          onChangeText={setText}
+        />
       </View>
-      <TouchableOpacity onPress={onSendAction}>
+      <TouchableOpacity disabled={_isRecognizing.value} onPress={onSendAction}>
         <FontAwesome
           name={'send-o'}
           color={defaultTheme.colors.inputText}
