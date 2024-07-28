@@ -46,6 +46,13 @@ import RecipeInstructionItem from './components/RecipeInstructionItem.tsx';
 import cache from '../../storage/cache.ts';
 import {useNetInfo} from '@react-native-community/netinfo';
 
+/**
+ * ChatBot is a functional component that manages the chatbot interface,
+ * handling user messages, voice recognition, and recipe information.
+ *
+ * @component
+ * @returns {JSX.Element} The ChatBot component.
+ */
 export default function ChatBot() {
   const user = useRef<User>({
     id: '06c33e8b-e835-4736-80f4-63f44b66666c',
@@ -98,6 +105,10 @@ export default function ChatBot() {
     }
   }, [isConnected, isInternetReachable]);
 
+  /**
+   * Adds a message to the chat.
+   * @param {MessageType.Any} message - The message to add.
+   */
   const addMessage = useCallback((message: MessageType.Any) => {
     // eslint-disable-next-line @typescript-eslint/no-shadow
     setMessages(messages => {
@@ -106,6 +117,10 @@ export default function ChatBot() {
     });
   }, []);
 
+  /**
+   * Removes a message from the chat.
+   * @param {MessageType.Any} message - The message to remove.
+   */
   const removeMessage = useCallback((message: MessageType.Any) => {
     // eslint-disable-next-line @typescript-eslint/no-shadow
     setMessages(messages => {
@@ -115,6 +130,10 @@ export default function ChatBot() {
     });
   }, []);
 
+  /**
+   * Handles commands input by the user.
+   * @param {string} command - The command to handle.
+   */
   const handleCommand = useCallback(async (command: string) => {
     if (isEqual(command, COMMAND_HELP)) {
       return addMessage({
@@ -185,6 +204,10 @@ export default function ChatBot() {
     }
   }, []);
 
+  /**
+   * Handles the send button press event.
+   * @param {string} message - The message to send.
+   */
   const handleSendPress = useCallback((message: string | any) => {
     const textMessage: MessageType.Text = {
       author: user.current,
@@ -200,10 +223,20 @@ export default function ChatBot() {
       .catch(_ => removeMessage(loaderMessage.current));
   }, []);
 
+  /**
+   * Custom input component for the chat.
+   * @returns {JSX.Element} The custom input component.
+   */
   const CustomInput = useCallback(() => {
     return <Input onSend={handleSendPress} />;
   }, [handleSendPress]);
 
+  /**
+   * Custom message renderer for the chat.
+   * @param {MessageType.Custom} _message - The custom message to render.
+   * @param {number} _messageWidth - The width of the message.
+   * @returns {JSX.Element | null} The custom message component.
+   */
   const CustomMessage = useCallback(
     (_message: MessageType.Custom, _messageWidth: number) => {
       const msgType: string | null = _message?.metadata?.ITEM_TYPE ?? null;

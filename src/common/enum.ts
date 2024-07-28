@@ -1,3 +1,6 @@
+/**
+ * Constants
+ */
 export const API_INFORMATION: string = 'information';
 export const API_INGREDIENT: string = 'ingredient';
 export const API_INSTRUCTION: string = 'instruction';

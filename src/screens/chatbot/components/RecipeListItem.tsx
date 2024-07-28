@@ -8,6 +8,24 @@ type RecipeProps = {
   item: SearchItem;
 };
 
+/**
+ * RecipeListItem is a functional component that displays a recipe item.
+ *
+ * @component
+ * @example
+ * const width = 300;
+ * const item = {
+ *   title: 'Recipe Title',
+ *   image: 'https://example.com/image.jpg'
+ * };
+ * return <RecipeListItem width={width} item={item} />;
+ *
+ * @param {RecipeProps} props - Props containing the width and item information.
+ * @param {number} props.width - The width of the component.
+ * @param {SearchItem} props.item - The recipe item information including title and image.
+ *
+ * @returns {JSX.Element} A view component displaying a recipe item.
+ */
 const RecipeListItem: FC<RecipeProps> = function ({width, item}) {
   return (
     <View

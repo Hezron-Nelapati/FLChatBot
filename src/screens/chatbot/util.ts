@@ -12,7 +12,12 @@ import {APIResponse, SearchItem} from '../../api/recipe.ts';
 import {MessageType, User} from '@flyerhq/react-native-chat-ui';
 import {concat} from 'lodash';
 
-// For the testing purposes, you should probably use https://github.com/uuidjs/uuid
+/**
+ * Generates a UUID (version 4).
+ * For testing purposes, you should probably use https://github.com/uuidjs/uuid.
+ *
+ * @returns {string} A UUID string.
+ */
 export const uuidv4 = () => {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
     const r = Math.floor(Math.random() * 16);
@@ -21,6 +26,13 @@ export const uuidv4 = () => {
   });
 };
 
+/**
+ * Converts an API response into an array of custom messages.
+ *
+ * @param {APIResponse} result - The API response object.
+ * @param {User} system - The system user object.
+ * @returns {MessageType.Custom[]} An array of custom message objects.
+ */
 export const getMessagesFromResponse = (
   result: APIResponse,
   system: User,

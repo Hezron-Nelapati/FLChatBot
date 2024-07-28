@@ -13,6 +13,32 @@ type RecipeInstructionProps = {
   item: Instruction[];
 };
 
+/**
+ * RecipeSteps is a functional component that displays the steps of a recipe.
+ *
+ * @component
+ * @example
+ * const steps = [
+ *   {
+ *     number: 1,
+ *     step: 'Mix flour and sugar',
+ *     equipment: [],
+ *     ingredients: [{id: 1, name: 'Flour', image: 'url_to_image'}]
+ *   },
+ *   {
+ *     number: 2,
+ *     step: 'Bake at 350 degrees',
+ *     equipment: [{id: 1, name: 'Oven', image: 'url_to_image'}],
+ *     ingredients: []
+ *   }
+ * ];
+ * return <RecipeSteps steps={steps} />;
+ *
+ * @param {RecipeStepProps} props - Props containing the steps of the recipe.
+ * @param {Step[]} props.steps - An array of steps for the recipe.
+ *
+ * @returns {JSX.Element} A view component displaying the steps of the recipe.
+ */
 const RecipeSteps: FC<RecipeStepProps> = function ({steps}) {
   return (
     <View style={{marginTop: 16}}>
@@ -131,6 +157,39 @@ const RecipeSteps: FC<RecipeStepProps> = function ({steps}) {
   );
 };
 
+/**
+ * RecipeInstructionItem is a functional component that displays the instructions for a recipe.
+ *
+ * @component
+ * @example
+ * const width = 300;
+ * const item = [
+ *   {
+ *     name: 'Instruction 1',
+ *     steps: [
+ *       {
+ *         number: 1,
+ *         step: 'Mix flour and sugar',
+ *         equipment: [],
+ *         ingredients: [{id: 1, name: 'Flour', image: 'url_to_image'}]
+ *       },
+ *       {
+ *         number: 2,
+ *         step: 'Bake at 350 degrees',
+ *         equipment: [{id: 1, name: 'Oven', image: 'url_to_image'}],
+ *         ingredients: []
+ *       }
+ *     ]
+ *   }
+ * ];
+ * return <RecipeInstructionItem width={width} item={item} />;
+ *
+ * @param {RecipeInstructionProps} props - Props containing the width and instructions for the recipe.
+ * @param {number} props.width - The width of the component.
+ * @param {Instruction[]} props.item - An array of instructions for the recipe.
+ *
+ * @returns {JSX.Element} A view component displaying the instructions for the recipe.
+ */
 const RecipeInstructionItem: FC<RecipeInstructionProps> = function ({
   width,
   item,

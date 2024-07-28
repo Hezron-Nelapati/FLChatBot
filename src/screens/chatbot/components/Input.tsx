@@ -1,52 +1,95 @@
 import React, {FC, useCallback, useEffect, useState} from 'react';
-import {Alert, Platform, TextInput, TouchableOpacity, View} from 'react-native';
+import {
+  ActivityIndicator,
+  Alert,
+  Platform,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {defaultTheme} from '@flyerhq/react-native-chat-ui';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import {isEmpty, join, trim} from 'lodash';
+import {isEmpty, trim} from 'lodash';
 import {check, PERMISSIONS, request, RESULTS} from 'react-native-permissions';
 import Recognizer from '../../../common/voice';
-import {SpeechResultsEvent, SpeechStartEvent} from '@react-native-voice/voice';
+import {
+  SpeechEndEvent,
+  SpeechErrorEvent,
+  SpeechResultsEvent,
+  SpeechStartEvent,
+} from '@react-native-voice/voice';
+import useBoolean from '../../../hooks/use-boolean.ts';
 
 type InputProps = {
   onSend: (text: string) => void;
 };
 
+/**
+ * Input is a functional component that provides a text input field with voice recognition capabilities.
+ *
+ * @component
+ * @example
+ * const handleSend = (text) => { console.log(text); };
+ * return <Input onSend={handleSend} />;
+ *
+ * @param {InputProps} props - Props containing the onSend callback function.
+ * @param {function} props.onSend - Callback function to handle sending the input text.
+ *
+ * @returns {JSX.Element} A view component with a text input field and voice recognition functionality.
+ */
 const Input: FC<InputProps> = function ({onSend}) {
+  const _isVoiceAvailable = useBoolean();
+  const _isRecognizing = useBoolean();
+
   const [text, setText] = useState('');
-  const [isVoiceAvailable, setIsVoiceAvailable] = useState(false);
 
   useEffect(() => {
-    Recognizer.isAvailable().then(_isVoiceAvailable =>
-      setIsVoiceAvailable(_isVoiceAvailable),
+    Recognizer.isAvailable().then(isVoiceAvailable =>
+      isVoiceAvailable ? _isVoiceAvailable.toggle() : null,
     );
-    Recognizer.attachListeners(startListener, null, resultListener);
+    Recognizer.attachListeners(
+      startListener,
+      stopListener,
+      errorListener,
+      resultListener,
+    );
     return () => {
       Recognizer.detachListeners();
     };
   }, []);
 
-  const onSendAction = useCallback(() => {
-    setText('');
-    if (isEmpty(trim(text))) {
-      return;
-    }
-    onSend(text);
-  }, [text, onSend]);
-
   const startListener = useCallback((event: SpeechStartEvent) => {
     if (event.error) {
-      Alert.alert('Error occurred while starting voice recognition');
+      console.error('Error occurred while starting voice recognition');
+      return;
     }
+    _isRecognizing.toggle(true);
   }, []);
 
-  const resultListener = useCallback(
-    (event: SpeechResultsEvent) => {
-      const _result = join(event.value ?? [], ' ');
-      onSend(_result);
-    },
-    [onSend],
-  );
+  const stopListener = useCallback((event: SpeechEndEvent) => {
+    if (event.error) {
+      console.error('Error occurred while stopping voice recognition');
+    }
+    _isRecognizing.toggle(false);
+  }, []);
+
+  const errorListener = useCallback((event: SpeechErrorEvent) => {
+    if (event.error) {
+      console.error('Error occurred while stopping voice recognition');
+    }
+    _isRecognizing.toggle(false);
+  }, []);
+
+  const resultListener = useCallback((event: SpeechResultsEvent) => {
+    const _result = event.value?.[0] ?? '';
+    setText(_result);
+    _isRecognizing.toggle(false);
+  }, []);
+
+  const stopVoiceRecognition = useCallback(async () => {
+    await Recognizer.stop();
+  }, []);
 
   const checkPermissionAndStartVoiceRecognition = useCallback(async () => {
     try {
@@ -72,6 +115,14 @@ const Input: FC<InputProps> = function ({onSend}) {
     }
   }, []);
 
+  const onSendAction = useCallback(() => {
+    setText('');
+    if (isEmpty(trim(text))) {
+      return;
+    }
+    onSend(text);
+  }, [text, onSend]);
+
   return (
     <View
       style={{
@@ -81,17 +132,32 @@ const Input: FC<InputProps> = function ({onSend}) {
         backgroundColor: defaultTheme.colors.inputBackground,
         alignItems: 'center',
       }}>
-      {isVoiceAvailable ? (
-        <TouchableOpacity onPress={checkPermissionAndStartVoiceRecognition}>
-          <MaterialCommunityIcons
-            name={'microphone-outline'}
-            color={defaultTheme.colors.inputText}
-            size={24}
-          />
-        </TouchableOpacity>
+      {_isVoiceAvailable.value ? (
+        _isRecognizing.value ? (
+          <TouchableOpacity onPress={stopVoiceRecognition}>
+            <MaterialCommunityIcons
+              name={'cancel'}
+              color={defaultTheme.colors.inputText}
+              size={24}
+            />
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity onPress={checkPermissionAndStartVoiceRecognition}>
+            <MaterialCommunityIcons
+              name={'microphone-outline'}
+              color={defaultTheme.colors.inputText}
+              size={24}
+            />
+          </TouchableOpacity>
+        )
       ) : null}
       <View
-        style={{flex: 1, marginLeft: isVoiceAvailable ? 8 : 0, marginRight: 8}}>
+        style={{
+          flexDirection: 'row',
+          flex: 1,
+          marginLeft: _isVoiceAvailable.value ? 8 : 0,
+          marginRight: 8,
+        }}>
         <TextInput
           value={text}
           style={{
@@ -100,6 +166,12 @@ const Input: FC<InputProps> = function ({onSend}) {
           }}
           onChangeText={setText}
         />
+        {_isRecognizing.value ? (
+          <ActivityIndicator
+            color={defaultTheme.colors.primary}
+            size={'small'}
+          />
+        ) : null}
       </View>
       <TouchableOpacity onPress={onSendAction}>
         <FontAwesome

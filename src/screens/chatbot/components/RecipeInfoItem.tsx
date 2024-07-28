@@ -9,6 +9,25 @@ type RecipeInfoProps = {
   item: Information;
 };
 
+/**
+ * RecipeInfoItem is a functional component that displays information about a recipe.
+ *
+ * @component
+ * @example
+ * const width = 300;
+ * const item = {
+ *   title: "Recipe Title",
+ *   image: "https://example.com/image.jpg",
+ *   summary: "<p>This is a summary of the recipe.</p>"
+ * };
+ * return <RecipeInfoItem width={width} item={item} />;
+ *
+ * @param {RecipeInfoProps} props - Props containing the width and item information.
+ * @param {number} props.width - The width of the component.
+ * @param {Information} props.item - The recipe information including title, image, and summary.
+ *
+ * @returns {JSX.Element} A view component displaying recipe information.
+ */
 const RecipeInfoItem: FC<RecipeInfoProps> = function ({width, item}) {
   return (
     <View

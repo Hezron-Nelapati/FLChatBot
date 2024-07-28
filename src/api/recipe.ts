@@ -78,9 +78,15 @@ export type APIResponse = {
   type: string;
 };
 
+/**
+ * Class to handle recipe API interactions.
+ */
 export default class Recipe {
   recipeAPI: AxiosInstance | null = null;
 
+  /**
+   * Creates an instance of Recipe.
+   */
   constructor() {
     this.recipeAPI = axios.create({
       baseURL: 'https://api.spoonacular.com/recipes',
@@ -91,6 +97,12 @@ export default class Recipe {
     });
   }
 
+  /**
+   * Finds a recipe by name.
+   *
+   * @param {string} recipe_name - The name of the recipe to find.
+   * @returns {Promise<APIResponse>} The API response containing the search results.
+   */
   async find(recipe_name: string): Promise<APIResponse> {
     try {
       const {results}: SearchResponse = (
@@ -109,6 +121,12 @@ export default class Recipe {
     }
   }
 
+  /**
+   * Retrieves information about a recipe by name.
+   *
+   * @param {string} recipe_name - The name of the recipe to get information for.
+   * @returns {Promise<APIResponse>} The API response containing the recipe information.
+   */
   async info(recipe_name: string): Promise<APIResponse> {
     try {
       const recipe_id: number | null =
@@ -134,6 +152,12 @@ export default class Recipe {
     }
   }
 
+  /**
+   * Searches for recipes by name.
+   *
+   * @param {string} recipe_name - The name of the recipe to search for.
+   * @returns {Promise<APIResponse>} The API response containing the search results.
+   */
   async search(recipe_name: string): Promise<APIResponse> {
     try {
       const {results}: SearchResponse = (
@@ -152,6 +176,12 @@ export default class Recipe {
     }
   }
 
+  /**
+   * Retrieves ingredients for a recipe by name.
+   *
+   * @param {string} recipe_name - The name of the recipe to get ingredients for.
+   * @returns {Promise<APIResponse>} The API response containing the ingredients.
+   */
   async ingredients(recipe_name: string): Promise<APIResponse> {
     try {
       const recipe_id: number | null =
@@ -177,6 +207,12 @@ export default class Recipe {
     }
   }
 
+  /**
+   * Retrieves instructions for a recipe by name.
+   *
+   * @param {string} recipe_name - The name of the recipe to get instructions for.
+   * @returns {Promise<APIResponse>} The API response containing the instructions.
+   */
   async instructions(recipe_name: string): Promise<APIResponse> {
     try {
       const recipe_id: number | null =

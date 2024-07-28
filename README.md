@@ -1,79 +1,133 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Recipe Bot
 
-# Getting Started
+Recipe Bot is a React Native application that helps users find delicious recipes and get cooking instructions. It
+includes features such as voice recognition for commands, chat interface for interactions, and various commands to
+search, list, and get details about recipes.
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+## Table of Contents
 
-## Step 1: Start the Metro Server
+- [Installation](#installation)
+- [Usage](#usage)
+- [Commands](#commands)
+- [Components](#components)
+- [APIs](#apis)
+- [License](#license)
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+## Installation
 
-To start Metro, run the following command from the _root_ of your React Native project:
+To set up the project locally, follow these steps:
 
-```bash
-# using npm
-npm start
+1. Clone the repository:
+    ```bash
+    git clone https://github.com/yourusername/recipe-bot.git
+    cd recipe-bot
+    ```
 
-# OR using Yarn
-yarn start
-```
+2. Install dependencies:
+    ```bash
+    yarn install
+    ```
 
-## Step 2: Start your Application
+3. Run the project:
+    ```bash
+    yarn run start
+    ```
 
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
+4. To run the app on an emulator or device:
+    ```bash
+    npx react-native run-android
+    # or
+    npx react-native run-ios
+    ```
 
-### For Android
+## Usage
 
-```bash
-# using npm
-npm run android
+Once the app is running, you can interact with the Recipe Bot via the chat interface. You can type commands or use the
+voice recognition feature to search for recipes, get ingredient lists, or instructions on how to make a dish.
 
-# OR using Yarn
-yarn android
-```
+## Commands
 
-### For iOS
+Here are some commands you can use to interact with the Recipe Bot:
 
-```bash
-# using npm
-npm run ios
+1. **Search for Recipes**
+    - Command: `search recipes on [ingredient/cuisine/dish name]`
+    - Example: `search recipes on chicken`
 
-# OR using Yarn
-yarn ios
-```
+2. **List Recipes**
+    - Command: `list [ingredient/cuisine/dish name] recipes`
+    - Example: `list vegetarian recipes`
 
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
+3. **Summary on Specific Recipe**
+    - Command: `[dish name] recipe`
+    - Example: `lasagna recipe`
 
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
+4. **List Ingredients of a Recipe**
+    - Command: `ingredients for [dish name]`
+    - Example: `ingredients for apple pie`
 
-## Step 3: Modifying your App
+5. **Instructions on How to Make a Recipe**
+    - Command: `how to make [dish name]`
+    - Example: `how to make brownies`
 
-Now that you have successfully run the app, let's modify it.
+## Components
 
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
+### App
 
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
+The main component that sets up the application environment, including safe area context and status bar configuration.
 
-## Congratulations! :tada:
+### NavigationView
 
-You've successfully run and modified your React Native App. :partying_face:
+Sets up the bottom tab navigator and includes the `ChatBot` screen as one of the tabs.
 
-### Now what?
+### ChatBot
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
+Manages the chatbot interface, handling user messages, voice recognition, and recipe information.
 
-# Troubleshooting
+### Input
 
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+Provides a text input field with voice recognition capabilities.
 
-# Learn More
+### RecipeListItem
 
-To learn more about React Native, take a look at the following resources:
+Displays a recipe item with its title and image.
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+### RecipeInfoItem
+
+Displays detailed information about a recipe, including its title, image, and summary.
+
+### RecipeIngredientItem
+
+Displays a list of ingredients for a recipe.
+
+### RecipeInstructionItem
+
+Displays the instructions for a recipe.
+
+## APIs
+
+### Recipe
+
+Handles interactions with the recipe API to search for recipes, get information, ingredients, and instructions.
+
+## HOOKS
+
+### useError
+
+A custom hook to manage error state.
+
+### useBoolean
+
+A custom hook to manage boolean state.
+
+## Screenshots
+
+To give you a better idea of what the app looks like, here are some screenshots:
+
+<p float="left">
+  <img src="screenshots/welcome.jpeg" alt="Home Screen" width="300" />
+  <img src="screenshots/chatbot.jpeg" alt="Recipe Search" width="300" />
+</p>
+
+## License
+
+This project is licensed under the MIT License.

@@ -6,6 +6,12 @@ import {
 import {StatusBar, useColorScheme} from 'react-native';
 import NavigationView from './routes';
 
+/**
+ * App is the main component that sets up the application environment,
+ * including safe area context and status bar configuration.
+ *
+ * @component
+ */
 export default function App() {
   const colorScheme = useColorScheme();
 

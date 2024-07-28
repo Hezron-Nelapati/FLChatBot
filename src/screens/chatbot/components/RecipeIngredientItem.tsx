@@ -8,6 +8,24 @@ type RecipeIngredientProps = {
   item: Ingredient[];
 };
 
+/**
+ * RecipeIngredientItem is a functional component that displays a list of recipe ingredients.
+ *
+ * @component
+ * @example
+ * const width = 300;
+ * const item = [
+ *   {name: 'Flour', amount: {us: {value: 2, unit: 'cups'}}},
+ *   {name: 'Sugar', amount: {us: {value: 1, unit: 'cup'}}},
+ * ];
+ * return <RecipeIngredientItem width={width} item={item} />;
+ *
+ * @param {RecipeIngredientProps} props - Props containing the width and list of ingredients.
+ * @param {number} props.width - The width of the component.
+ * @param {Ingredient[]} props.item - The list of ingredients, where each ingredient includes a name and an amount.
+ *
+ * @returns {JSX.Element} A view component displaying the list of ingredients.
+ */
 const RecipeIngredientItem: FC<RecipeIngredientProps> = function ({
   width,
   item,
